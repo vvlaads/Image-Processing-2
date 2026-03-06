@@ -22,12 +22,15 @@ def monte_carlo_function_with_stratification(rng, a, b, f, step=0.5):
     return s
 
 
-def monte_carlo_function_with_sampling_by_significance(rng, a, b, f):
+def monte_carlo_function_with_sampling_by_significance(rng, a, b, f, p, inverse_p):
     """Интегрирование методом Монте-Карло с выборкой по значимости"""
-    return monte_carlo_function(rng, a, b, f)
+    tau = rng.random()
+    xi = inverse_p(tau, a, b)
+
+    return f(xi) / p(xi, a, b)
 
 
-def monte_carlo_function_with_multiple_sampling_by_significance(rng, a, b, f):
+def monte_carlo_function_with_multiple_sampling_by_significance(rng, a, b, f, p):
     """Интегрирование методом Монте-Карло с многократной выборкой по значимости"""
     return monte_carlo_function(rng, a, b, f)
 
