@@ -49,9 +49,15 @@ rng = random.Random(42)
 print(f"Значение интеграла: {integral}")
 print(f"Простой метод Монте-Карло: {monte_carlo_function(rng, a, b, function)}")
 print(f"Метод Монте-Карло со стратификацией: {monte_carlo_function_with_stratification(rng, a, b, function)}")
+
 print(f"Метод Монте-Карло с выборкой по значимости (x): "
       f"{monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p1, inverse_p1)}")
 print(f"Метод Монте-Карло с выборкой по значимости (x^2): "
       f"{monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p2, inverse_p2)}")
 print(f"Метод Монте-Карло с выборкой по значимости (x^3): "
       f"{monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p3, inverse_p3)}")
+
+print(f"Метод Монте-Карло с многократной выборкой по значимости (среднее): "
+      f"{monte_carlo_function_with_multiple_sampling_by_significance(rng, a, b, function, p1, inverse_p1, p3, inverse_p3, weights_type=WeightType.BALANCE)}")
+print(f"Метод Монте-Карло с многократной выборкой по значимости (квадрат): "
+      f"{monte_carlo_function_with_multiple_sampling_by_significance(rng, a, b, function, p1, inverse_p1, p3, inverse_p3, weights_type=WeightType.POWER)}")
