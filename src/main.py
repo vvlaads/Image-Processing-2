@@ -41,23 +41,64 @@ def inverse_p3(tau, start, end):
     return (tau * (end ** 4 - start ** 4) + start ** 4) ** 0.25
 
 
+def estimate(method, samples, true_value):
+    """Вычисление методом с выборкой samples раз"""
+    s = 0
+    for _ in range(samples):
+        s += method()
+    i = s / samples
+    error = abs(i - true_value)
+    delta_i = error / sqrt(samples)
+    return i, error, delta_i
+
+
 a = 2
 b = 5
 integral = 39
 
 rng = random.Random(42)
 print(f"Значение интеграла: {integral}")
-print(f"Простой метод Монте-Карло: {monte_carlo_function(rng, a, b, function)}")
-print(f"Метод Монте-Карло со стратификацией: {monte_carlo_function_with_stratification(rng, a, b, function)}")
+for n in [100, 1000, 10_000, 100_000]:
+    print("=" * 100)
+    print(f"N = {n}")
 
-print(f"Метод Монте-Карло с выборкой по значимости (x): "
-      f"{monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p1, inverse_p1)}")
-print(f"Метод Монте-Карло с выборкой по значимости (x^2): "
-      f"{monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p2, inverse_p2)}")
-print(f"Метод Монте-Карло с выборкой по значимости (x^3): "
-      f"{monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p3, inverse_p3)}")
+    i, err, delta = estimate(lambda: monte_carlo_function(rng, a, b, function), n, integral)
+    print(f"Простой метод Монте-Карло: I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
 
-print(f"Метод Монте-Карло с многократной выборкой по значимости (среднее): "
-      f"{monte_carlo_function_with_multiple_sampling_by_significance(rng, a, b, function, p1, inverse_p1, p3, inverse_p3, weights_type=WeightType.BALANCE)}")
-print(f"Метод Монте-Карло с многократной выборкой по значимости (квадрат): "
-      f"{monte_carlo_function_with_multiple_sampling_by_significance(rng, a, b, function, p1, inverse_p1, p3, inverse_p3, weights_type=WeightType.POWER)}")
+    i, err, delta = estimate(lambda: monte_carlo_function_with_stratification(rng, a, b, function), n, integral)
+    print(f"Метод Монте-Карло со стратификацией: I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
+
+    i, err, delta = estimate(
+        lambda: monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p1, inverse_p1), n, integral)
+    print(f"Метод Монте-Карло с выборкой по значимости (x): I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
+    i, err, delta = estimate(
+        lambda: monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p2, inverse_p2), n, integral)
+    print(f"Метод Монте-Карло с выборкой по значимости (x^2): I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
+    i, err, delta = estimate(
+        lambda: monte_carlo_function_with_sampling_by_significance(rng, a, b, function, p3, inverse_p3), n, integral)
+    print(f"Метод Монте-Карло с выборкой по значимости (x^3): I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
+
+    i, err, delta = estimate(
+        lambda: monte_carlo_function_with_multiple_sampling_by_significance(rng, a, b, function, p1, inverse_p1, p3,
+                                                                            inverse_p3,
+                                                                            weights_type=WeightType.BALANCE), n,
+        integral)
+    print(
+        f"Метод Монте-Карло с многократной выборкой по значимости (среднее): I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
+
+    i, err, delta = estimate(
+        lambda: monte_carlo_function_with_multiple_sampling_by_significance(rng, a, b, function, p1, inverse_p1, p3,
+                                                                            inverse_p3,
+                                                                            weights_type=WeightType.POWER), n,
+        integral)
+    print(
+        f"Метод Монте-Карло с многократной выборкой по значимости (квадрат): I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
+
+    i, err, delta = estimate(lambda: monte_carlo_function_with_russian_roulette(rng, a, b, function, 0.5), n, integral)
+    print(f"Метод Монте-Карло с русской рулеткой (0.5): I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
+
+    i, err, delta = estimate(lambda: monte_carlo_function_with_russian_roulette(rng, a, b, function, 0.75), n, integral)
+    print(f"Метод Монте-Карло с русской рулеткой (0.75): I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
+
+    i, err, delta = estimate(lambda: monte_carlo_function_with_russian_roulette(rng, a, b, function, 0.9), n, integral)
+    print(f"Метод Монте-Карло с русской рулеткой (0.9): I = {i:.4f}; err = {err:.4f}; delta = {delta:.5f}")
