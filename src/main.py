@@ -48,7 +48,7 @@ def estimate(method, samples, true_value):
         s += method()
     i = s / samples
     error = abs(i - true_value)
-    delta_i = error / sqrt(samples)
+    delta_i = true_value / sqrt(samples)
     return i, error, delta_i
 
 

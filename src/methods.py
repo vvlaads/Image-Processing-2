@@ -51,6 +51,8 @@ def monte_carlo_function_with_multiple_sampling_by_significance(
 
 def monte_carlo_function_with_russian_roulette(rng, a, b, f, r):
     """Интегрирование методом Монте-Карло с использованием русской рулетки"""
-    if rng.random() > r:
+    xi = rng.uniform(a, b)
+    r1 = (a + (b - a) * r)
+    if xi > r1:
         return 0
-    return monte_carlo_function(rng, a, b, f) / r
+    return (r1 - a) * f(xi / r) / r
