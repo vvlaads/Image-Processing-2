@@ -35,6 +35,7 @@ def monte_carlo_function_with_sampling_by_significance(rng, a, b, f, p, inverse_
 def monte_carlo_function_with_multiple_sampling_by_significance(
         rng, a, b, f, p1, inverse_p1, p2, inverse_p2,
         weights_type=WeightType.BALANCE):
+    """Интегрирование методом Монте-Карло с многократной выборкой по значимости"""
     tau = rng.random()
     xi1 = inverse_p1(tau, a, b)
     xi2 = inverse_p2(tau, a, b)
